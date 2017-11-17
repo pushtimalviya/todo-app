@@ -2,9 +2,12 @@ var express = require('express');
 
 var app = express();
 var PORT = process.env.PORT || 8080;
-var todos = [{
+var todos = [];
+var todoNext = 1;
+var bodyParser = require('body-parser');
+/*{
 	id:1,
-	description: 'wakeup at 7',
+	description: 'leave home by 7:30',
 	done:false
 },
 {
@@ -17,10 +20,9 @@ var todos = [{
 	id:3,
 	description: 'go to market',
 	done:true
-}];
+}*/
 
-//   app.use( express.static(__dirName+''));
-
+ app.use( bodyParser.json());
 app.get('/',(function ( req,res) {
 
 	res.send ('todo API root');
@@ -59,7 +61,17 @@ app.get('/todos/:id',function (req,res) {
 
 });
 
+app.post('/todos',function (req,res) {
+	var body = req.body;
+
+	body.id = todoNext;
+	todoNext++; 
+	todos.push(body)
+	// console.log('description'+ body.description);
+
+	res.json(body);
+})
 
 app.listen( PORT, function() {
-	console.log('server listning port' + PORT);
+	console.log('server listning port : ' + PORT);
 })
