@@ -30,7 +30,25 @@ app.get('/',(function ( req,res) {
 );
 
 app.get('/todo',function (req,res) {
-	res.send(todos);
+
+		var queryParams = req.query;
+		var filteredObj;
+
+		if( queryParams.hasOwnProperty('completed') && queryParams.completed == 'true'){
+
+			filteredObj = _.where( todos, { completed:true});
+			res.json(filteredObj);
+
+		} else if ( queryParams.hasOwnProperty('completed') && queryParams.completed == 'false'){
+
+			filteredObj = _.where( todos, { completed:false});
+			res.json(filteredObj);
+		} else {
+
+			res.json(todos);
+		}
+
+				
 });
 
 app.get('/todos/:id',function (req,res) {
