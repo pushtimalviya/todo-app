@@ -64,7 +64,9 @@ app.get('/todos/:id',function (req,res) {
 });
 
 app.post('/todos',function (req,res) {
-	var body = req.body;
+	// var body = req.body; // underscore . pick
+	var  body = _.pick(req.body,'description','completed');
+
 
 
 	if( !_.isString(body.description) || body.description.trim().length === 0){
@@ -72,14 +74,16 @@ app.post('/todos',function (req,res) {
 		/*console.log(body);*/
 		return res.sendStatus(400);
 	}
-		else {
+
+	body.description = body.description.trim();
+		
 	body.id = todoNext;
 	todoNext++; 
 	todos.push(body)
 	// console.log('description'+ body.description);
 	//console.log(body);
 	res.json(body);
-}
+
 })
 
 app.listen( PORT, function() {
