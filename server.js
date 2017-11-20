@@ -99,7 +99,43 @@ app.delete('/delete/:id', function (req,res) {
 			res.json(matchtodoId);
 		}
 
-})
+});
+
+
+ app.put('/update/:id', function (req, res) {
+
+ 				//var updateId = parseInt(req.params.id, 10);
+ 		 var todoId = parseInt( req.params.id, 10);
+ 		 var matchtodoId = _.findWhere( todos ,{id: todoId});
+ 		 var body = _.pick( req.body,'description','completed');
+ 		 var attributes ={};
+
+
+ 		 if (!matchtodoId){ 
+			res.sendStatus(404);
+		}
+
+
+ 		 if (body.hasOwnProperty('completed') && _.isBoolean(body.completed)) {
+
+ 		 		 attributes.completed = body.completed; 
+ 		 } else if (body.hasOwnProperty('completed')) {
+
+ 		 	return res.sendStatus(400);
+ 		 } 
+
+ 		 if (body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length > 0){
+ 		 	 attributes.description = body.description;
+
+ 		 } else if (body.hasOwnProperty('description')) {
+
+ 		 	 return res.sendStatus(400);
+ 		 }
+
+ 		 _.extend(matchtodoId,attributes);
+ 		 res.json(matchtodoId);
+});
+
 app.listen( PORT, function() {
 	console.log('server listning port : ' + PORT);
 })
