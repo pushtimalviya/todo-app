@@ -32,22 +32,28 @@ app.get('/',(function ( req,res) {
 app.get('/todo',function (req,res) {
 
 		var queryParams = req.query;
-		var filteredObj;
+		var filteredObj = todos;
 
 		if( queryParams.hasOwnProperty('completed') && queryParams.completed == 'true'){
 
 			filteredObj = _.where( todos, { completed:true});
-			res.json(filteredObj);
+			// res.json(filteredObj);
 
 		} else if ( queryParams.hasOwnProperty('completed') && queryParams.completed == 'false'){
 
 			filteredObj = _.where( todos, { completed:false});
-			res.json(filteredObj);
-		} else {
+			// res.json(filteredObj);
+		} 
 
-			res.json(todos);
+		 if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+ 
+			filteredObj = _.filter(todos, function (todo) {
+
+			return  todo.description.indexOf(queryParams.q) > -1;
+		})
 		}
 
+				res.json(filteredObj);
 				
 });
 
