@@ -156,7 +156,24 @@ app.post('/todos',function (req,res) {
 app.delete('/delete/:id', function (req,res) {
 
 		var todoId = parseInt( req.params.id, 10);
-		var matchtodoId = _.findWhere( todos ,{id: todoId});
+
+		db.todo.destroy({
+				    where: {
+				    	id: todoId
+				            }
+				}).then(function (rowsDel){
+					if(rowsDel === 0){
+						res.sendStatus(404);
+					}else{
+						res.sendStatus(204);
+					}
+
+						}, function (e){
+
+					res.sendStatus(500);
+
+				})
+/*		var matchtodoId = _.findWhere( todos ,{id: todoId});
 
 		if (!matchtodoId){ 
 			res.sendStatus(404);
@@ -164,7 +181,7 @@ app.delete('/delete/:id', function (req,res) {
 
 			todos = _.without(todos,matchtodoId);
 			res.json(matchtodoId);
-		}
+		}*/
 
 });
 
