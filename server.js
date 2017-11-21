@@ -4,7 +4,8 @@ var PORT = process.env.PORT || 8080;
 var todos = [];
 var todoNext = 1;
 var bodyParser = require('body-parser');
-var _ = require('underscore')
+var _ = require('underscore');
+var db = require('./db.js');
 /*{
 	id:1,
 	description: 'leave home by 7:30',
@@ -91,22 +92,28 @@ app.post('/todos',function (req,res) {
 	// var body = req.body; // underscore . pick
 	var  body = _.pick(req.body,'description','completed');
 
+			db.todo.create(body).then(function(todo) {
+					res.json(todo.toJSON());
+					console.log('in first promise');
+			}).catch(function (e) {
+				res.sendStatus(400).json(e);
+			}); // used catch to handle rejection condition
 
 
-	if( !_.isString(body.description) || body.description.trim().length === 0){
+	// /*if( !_.isString(body.description) || body.description.trim().length === 0){
 
-		/*console.log(body);*/
-		return res.sendStatus(400);
-	}
+	// 	/*console.log(body);*/
+	// 	return res.sendStatus(400);
+	// }
 
-	body.description = body.description.trim();
+	// body.description = body.description.trim();
 		
-	body.id = todoNext;
-	todoNext++; 
-	todos.push(body)
-	// console.log('description'+ body.description);
-	//console.log(body);
-	res.json(body);
+	// body.id = todoNext;
+	// todoNext++; 
+	// todos.push(body)
+	// // console.log('description'+ body.description);
+	// //console.log(body);
+	// res.json(body);
 
 })
 
@@ -160,6 +167,10 @@ app.delete('/delete/:id', function (req,res) {
  		 res.json(matchtodoId);
 });
 
-app.listen( PORT, function() {
-	console.log('server listning port : ' + PORT);
-})
+ db.sequelize.sync().then( function() {
+ 			app.listen( PORT, function() {
+			console.log('server listning port : ' + PORT);
+	})
+
+ })
+
