@@ -31,8 +31,30 @@ app.get('/',(function ( req,res) {
 );
 
 app.get('/todo',function (req,res) {
+	var queryParams = req.query;
+	var where = {}
+	if( queryParams.hasOwnProperty('completed') && queryParams.completed == 'true'){
+	 			where.completed = true;
+	}  else if ( queryParams.hasOwnProperty('completed') && queryParams.completed == 'false'){
+	 				where.completed = false;			
+	} 
+		if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+ 				where.description = {  
+ 										$like :'%'+queryParams.q+'%'
+ 										};
+						 				
+	} 
 
-		var queryParams = req.query;
+	db.todo.findAll ({ 		
+					where: where })
+						.then(function (todos) { 
+							res.json(todos);
+						}, function (e) {
+							res.sendStatus(404)
+						});
+											 		
+
+	/*	var queryParams = req.query;
 		var filteredObj = todos;
 
 		if( queryParams.hasOwnProperty('completed') && queryParams.completed == 'true'){
@@ -54,7 +76,7 @@ app.get('/todo',function (req,res) {
 		})
 		}
 
-				res.json(filteredObj);
+				res.json(filteredObj);*/
 				
 });
 
