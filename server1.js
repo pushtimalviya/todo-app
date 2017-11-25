@@ -22,7 +22,7 @@ app.post('/user', function(req,res) {
 			db.user.create(body)
 			.then(function(item) {
 				console.log(item);
-				res.json(item.toJSON());					
+				res.json(item.toPublicJSON());					
 			},function (e) {
 				res.json(e);
 				// res.json(e);
