@@ -13,8 +13,8 @@ app.use( bodyParser.json());
 app.get('/',(function ( req,res) {
 
 			res.send ('todo API root');
-		}) 
-		);
+		})
+);
 
 app.get('/todo',function (req,res) {
 			var queryParams = req.query;
@@ -25,21 +25,22 @@ app.get('/todo',function (req,res) {
 			}  else if ( queryParams.hasOwnProperty('completed') && queryParams.completed == 'false'){
 					where.completed = false;	
 
-			} 
+				} 
 
 			if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
 					where.description = {  
 						$like :'%'+queryParams.q+'%'
-			};		
-		} 
+					};		
+			} 
 
 				db.todo.findAll ({ 		
-						where: where })
+						where: where 
+					})
 				.then(function (todos) { 
 						res.json(todos);
 				}, function (e) {
-						res.sendStatus(404)
-				});
+						res.status(404).json(e);
+					});
 });
 
 app.get('/todos/:id',function (req,res) {
@@ -51,14 +52,14 @@ app.get('/todos/:id',function (req,res) {
 				if(!!todo){
 					res.json(todo.toJSON());
 
-				}else {
-					res.sendStatus(404);
-				}
+				} else {
+						res.status(404).json(e);
+					}
 
 			},function(e) {
-				res.sendStatus(500);
+				res.status(500);
 			}).catch( function(e) {
-						console.log(e);
+						res.status(400).json(e);
 			})
 
 });
@@ -70,7 +71,7 @@ app.post('/todos',function (req,res) {
 					res.json(todo.toJSON());
 					console.log('in first promise');
 			}).catch(function (e) {
-				res.sendStatus(400).json(e);
+				res.status(400).json(e);
 			}); 
 })
 
@@ -84,14 +85,14 @@ app.delete('/delete/:id', function (req,res) {
 				            }
 				}).then(function (rowsDel){
 					if(rowsDel === 0){
-						res.sendStatus(404);
+						res.status(404).json(e);
 					}else{
-						res.sendStatus(204);
+						res.status(204).json(e);
 					}
 
 						}, function (e){
 
-					res.sendStatus(500);
+					res.status(500).json(e);
 
 				})
 });
@@ -121,15 +122,15 @@ app.delete('/delete/:id', function (req,res) {
  		 					res.json(todo.toJSON());
 
  					 },function(e){
- 		 					res.sendStatus(400).json(e);
+ 		 					res.status(400).json(e);
  							 });
  		 		} else{
 
- 		 				res.sendStatus(404);
+ 		 				res.status(404);
  		 		}
 
 		 		 },function () {
-		 		 	res.sendStatus(500);
+		 		 	res.status(500).json(e);
 		 		 });
 
  });
@@ -143,7 +144,7 @@ app.delete('/delete/:id', function (req,res) {
 				console.log(item);
 				res.json(item.toJSON());					
 			},function (e) {
-				res.sendStatus(400).json(e);
+				res.status(400).json(e);
 				
 				});
  });
